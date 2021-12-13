@@ -1,6 +1,6 @@
 import './App.css';
 import { useEffect, useState } from 'react';
-import { BrowserRouter, NavLink } from 'react-router-dom';
+import { BrowserRouter, NavLink, Switch, Route } from 'react-router-dom';
 
 import CharacterList from './components/Characters/CharacterList';
 import FilmList from './components/Films/FilmList';
@@ -15,6 +15,13 @@ function App() {
   }, []);
 
   const getFilms = async () => {
+    const resp = await fetch('https://the-one-api.dev/v2/movie/', {
+      headers: {
+        Authorization: `Bearer ${process.env.REACT_APP_API_KEY}`,
+      },
+    });
+    const data = await resp.json();
+    console.log(data);
     // Add your code here!
     // 1. Get data using fetch from https://the-one-api.dev/v2/movie/ (don't forget to set your header!)
     // 2. Transform the response so that films contains nested arrays of:
@@ -57,6 +64,9 @@ function App() {
             Characters
           </NavLink>
         </header>
+        {/* <Switch>
+          <Route path="/films" component={FilmList} />
+        </Switch> */}
         {/* ADD YOUR ROUTES HERE */}
       </BrowserRouter>
     </div>
