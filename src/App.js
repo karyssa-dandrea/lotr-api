@@ -23,16 +23,23 @@ function App() {
     });
     const data = await resp.json();
     const dataTransformed = data.map((movie) => {
-      return [
-        movie.title,
-        movie.title.toLowerCase().replace(/\s+/g, '-'),
-        movie.box_office_total,
-        movie.academy_award_nominations,
-      ];
+      if (movie.title[movie.title.length - 1] === ' ') {
+        return [
+          movie.title,
+          movie.title.toLowerCase().replace(/\s+/g, '-').slice(0, -1),
+          movie.box_office_total,
+          movie.academy_award_nominations,
+        ];
+      } else {
+        return [
+          movie.title,
+          movie.title.toLowerCase().replace(/\s+/g, '-'),
+          movie.box_office_total,
+          movie.academy_award_nominations,
+        ];
+      }
     });
     setFilms(dataTransformed);
-    console.log(data);
-    await console.log(dataTransformed);
 
     // Add your code here!
     // 1. Get data using fetch from https://the-one-api.dev/v2/movie/ (don't forget to set your header!)
@@ -57,10 +64,13 @@ function App() {
     });
     const data = await resp.json();
     const characterData = data.map((c) => {
-      return { ...c, dates: `${c.birth}` };
+      if (c.birth !== 'Unknown' && c.death !== 'Unknown') {
+        return { ...c, dates: `${c.birth} - ${c.death}` };
+      } else {
+        return { ...c, dates: `Unknown` };
+      }
     });
     setCharacters(characterData);
-    await console.log(characters);
     // Add your code here!
     // 1. Get data using fetch from https://the-one-api.dev/v2/character/
     // 2. Update the response data with the key `dates` which is a combination of
