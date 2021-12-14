@@ -15,13 +15,25 @@ function App() {
   }, []);
 
   const getFilms = async () => {
-    const resp = await fetch('https://the-one-api.dev/v2/movie/', {
+    const resp = await fetch(`${process.env.REACT_APP_SUPABASE_URL}/rest/v1/films`, {
       headers: {
-        Authorization: `Bearer ${process.env.REACT_APP_API_KEY}`,
+        apikey: process.env.REACT_APP_SUPABASE_KEY,
+        Authorization: `Bearer ${process.env.REACT_APP_SUPABASE_KEY}`,
       },
     });
     const data = await resp.json();
+    const dataTransformed = data.map((movie) => {
+      return [
+        movie.title,
+        movie.title.toLowerCase().replace(/\s+/g, '-'),
+        movie.box_office_total,
+        movie.academy_award_nominations,
+      ];
+    });
+    setFilms(dataTransformed);
     console.log(data);
+    await console.log(dataTransformed);
+
     // Add your code here!
     // 1. Get data using fetch from https://the-one-api.dev/v2/movie/ (don't forget to set your header!)
     // 2. Transform the response so that films contains nested arrays of:
@@ -34,10 +46,21 @@ function App() {
 
     // 3. Set the resulting transformation as state using setFilms
     // 4. You'll know it works if the films show up on the page
-    return [];
   };
 
   const getCharacters = async () => {
+    const resp = await fetch(`${process.env.REACT_APP_SUPABASE_URL}/rest/v1/characters`, {
+      headers: {
+        apikey: process.env.REACT_APP_SUPABASE_KEY,
+        Authorization: `Bearer ${process.env.REACT_APP_SUPABASE_KEY}`,
+      },
+    });
+    const data = await resp.json();
+    const characterData = data.map((c) => {
+      return { ...c, dates: `${c.birth}` };
+    });
+    setCharacters(characterData);
+    await console.log(characters);
     // Add your code here!
     // 1. Get data using fetch from https://the-one-api.dev/v2/character/
     // 2. Update the response data with the key `dates` which is a combination of
@@ -50,7 +73,6 @@ function App() {
     //    ]
     // 3. Set the resulting transformation as state using setCharacters
     // 4. You'll know it works if the characters show up on the page
-    return [];
   };
 
   return (
@@ -64,10 +86,14 @@ function App() {
             Characters
           </NavLink>
         </header>
-        {/* <Switch>
-          <Route path="/films" component={FilmList} />
-        </Switch> */}
-        {/* ADD YOUR ROUTES HERE */}
+        <Switch>
+          <Route path="/films">
+            <FilmList films={films} />
+          </Route>
+          <Route path="/characters">
+            <CharacterList characters={characters} />
+          </Route>
+        </Switch>
       </BrowserRouter>
     </div>
   );
